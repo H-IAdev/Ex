@@ -1,0 +1,528 @@
+/* Estilos base */
+body {
+    background-image: linear-gradient(rgb(5 63 67 / 30%), rgb(29 54 69 / 30%)), url(https://images6.alphacoders.com/110/1109889.jpg);
+    background-size: 160% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+/* Barra de navegación */
+.barra-navegacion {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: transparent;
+    display: flex;
+    justify-content: space-evenly;
+    padding: 30px 0px;
+    z-index: 1000;
+}
+
+.menu-hamburguesa {
+    display: flex;
+    font-size: 24px;
+    color: #fff;
+    align-items: center;
+    width: 5%;
+    justify-content: flex-end;
+}
+
+.menu-container {
+    display: flex;
+    justify-content: space-around;
+    width: 70%;
+}
+
+.barra-navegacion .menu {
+    list-style: none;
+    display: flex;
+    padding: 0 48% 0 0;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.barra-navegacion .menu li {
+    margin-right: 20px;
+}
+
+.barra-navegacion .menu li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.barra-navegacion .menu li a:hover {
+    color: #4CAF50;
+}
+
+.barra-navegacion .redes-sociales {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 20%;
+}
+
+.barra-navegacion .redes-sociales p{
+    padding: 0px 10px 0px 10px;
+}
+
+
+.barra-navegacion .redes-sociales a {
+    color: #fff;
+    font-size: 18px;
+    transition: color 0.3s, transform 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+/* Hero section */
+
+.line-nav{
+    display: flex;
+    width: 2px;
+    height: 100%;
+    flex-wrap: wrap;
+    position: relative;
+    left: 35px;
+    align-content: space-between;
+}
+
+.line-nav li{
+    height: 2.5%;
+    width: 5px;
+    font-size: 20px;
+    position: relative;
+    left: -1px;
+    align-content: center;
+    color: #ffffff66;
+}
+
+.space-nav{
+    width: 2px;
+    height: 10%;
+    background-color: transparent;
+}
+
+.line-void{
+    width: 2px;
+    height: 30%;
+    background-color: rgba(255, 255, 255, 0.274);
+}
+
+.line-start{
+    content: '';
+    width: 2px;
+    height: 60%;
+    background-color: rgba(255, 255, 255, 0.274);
+}
+
+.line-end{
+    content: '';
+    width: 2px;
+    height: 10%;
+    background-color: rgba(255, 255, 255, 0.274);
+}
+
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 50px;
+}
+
+.hero-card {
+    border-radius: 10px;
+    max-width: 450px;
+    text-align: left;
+    position: relative;
+    left: 200px;
+    top: 50px;
+}
+
+.hero-card p {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 72px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-card .tagline {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 300px;
+    font-size: 16px;
+    text-shadow: none;
+    font-weight: 100;
+}
+
+.hero-card .description {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    margin-bottom: 60px;
+    line-height: 1.6;
+    text-shadow: none;
+    font-weight: 100;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+    background-color: #e6ff05;
+}
+
+.detail-card{
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+    padding: 80px 0px 0px;
+    line-height: 2;
+}
+
+.line-follow{
+    width: 2px;
+    height: 100%;
+    left: 684.8px;
+    position: relative;
+    background-color: #ffffff27;
+}
+
+.line-hfollow{
+    width: 24%;
+    height: 2px;
+    top: -348px;
+    left: 684.8px;
+    position: relative;
+    background-color: #ffffff27;
+}
+
+.follow-card{
+    max-width: 770px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    line-height: 2;
+    position: relative;
+    left: 340px;
+    top: 150px;
+}
+
+.follow-card spam{
+    padding: 30px 0px 15px 48px;
+    font-size: 14px;
+}
+
+.trailer-fc {
+    display: flex;
+    width: 344.8px;
+    position: relative;
+    left: -1px;
+    top: 70px;
+}
+
+.video-fc {
+    width: 100%;
+    height: 193.94px;
+}
+
+.video-fc img {
+    position: relative;
+    top: 0;
+    width: 100%;
+    object-fit: cover;
+}
+
+.video-fc button{
+    position: relative;
+    top: -55%;
+    left: 25%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(255 255 255 / 90%);
+    border: none;
+    color: #000000;
+    font-size: 20px;
+    padding: 12px 17px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.video-fc .watch-trailer{
+    position: relative;
+    top: -68%;
+    left: 80px;
+}
+
+/* Movie details section */
+.movie-details {
+    display: flex;
+    justify-content: space-between;
+    padding: 80px 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.info-block, .trailer-block {
+    flex-basis: 48%;
+}
+
+.info-block ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.info-block li {
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 48.36125%;
+    overflow: hidden;
+}
+
+.video-container img {
+    position: absolute;
+    top: 0;
+    left: 12%;
+    width: 80%;
+    height: 48.36125%;
+    object-fit: cover;
+}
+
+.play-button {
+    position: absolute;
+    top: 22.5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    font-size: 24px;
+    padding: 18px 23px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+
+
+/* Otras secciones */
+section {
+    padding: 80px 20px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+section.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+section h2 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+/* Footer */
+footer {
+    background-color: rgba(0, 0, 0, 0.9);
+    text-align: center;
+    padding: 30px;
+}
+
+footer h2 {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+footer p {
+    font-size: 16px;
+}
+
+
+/* responsive */
+
+@media screen and (min-width: 1600px) {
+
+    .line-nav{
+        left: 58px;
+    }
+
+    .line-follow{
+        left: 975px;
+    }
+
+    .line-hfollow{
+        left: 974.5px;
+        width: 24.5%;
+    }
+
+    .follow-card{
+        left: 528px;
+        height: 682px;
+        top: 5%;
+    }
+
+    .follow-card spam{
+        padding: 20px 0px 15px 80px;
+    }
+
+    .trailer-fc{
+        height: 249.08px;
+        width: 444.8px;
+    }
+
+    .video-fc{
+        height: 249.08px;
+    }
+
+    .video-fc .watch-trailer{
+        top: -164px;
+        left: 110px;
+    }
+}
+
+@media (max-width: 1200px) and (max-width: 1535px) {
+    .hero-card{
+       left: 1px;
+    }
+}
+
+@media (max-width: 768px) and (max-width: 900px) {
+
+    body{
+        background-color: #010202;
+        background-size: cover;
+        background-position: top;
+        color: #d4f9ff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .hero{
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        height: 100%;
+    }
+
+    .line-nav{
+        display: none;
+    }
+
+    .hero-card{
+        padding: 0px 40px 40px;
+        left: 0;
+        top: 0;
+    }
+
+    .line-start{
+        display: none;
+    }
+
+    .line-end{
+        display: none;
+    }
+
+    .line-void{
+        display: none;
+    }
+
+    .line-follow{
+        display: none;
+    }
+
+    .line-hfollow{
+        display: none;
+    }
+
+    .barra-navegacion{
+        display: none;
+    }
+
+    .tagline{
+        display: none;
+    }   
+
+    .detail-card{
+        display: none;
+    }
+
+    .follow-card spam{
+        display: none;
+    }   
+
+    .follow-card{
+        height: auto;
+        line-height: 2;
+        align-items: center;
+        top: 0;
+        left: 0px;
+        padding: 40px 0px;
+        margin: 0px 0px 60px;
+    }
+
+    .trailer-fc{
+        display: flex;
+        width: 344.8px;
+        top: 0;
+    }
+
+    .movie-details {
+        flex-direction: column;
+        background-color: transparent;
+    }
+
+    #about, #videos, #featured, #gallery{
+        display: none;
+    }   
+
+    #info h2{
+        display: none;
+    }
+
+    footer{
+        background-color: rgba(0, 0, 0, 0.9);
+        text-align: center;
+        padding: 30px;
+    }
+
+
+}
+

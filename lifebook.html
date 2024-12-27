@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de Vida</title>
+    <style>
+        :root {
+            --primary-color: #4fc3dc;
+            --secondary-color: #2eaebf;
+            --bg-gradient: linear-gradient(135deg, #062c43, #0f4c75);
+            --card-bg: rgba(15, 76, 117, 0.2);
+            --hover-transform: translateY(-5px) scale(1.02);
+            --container-padding: clamp(1rem, 3vw, 2rem);
+            --block-padding: clamp(1rem, 2vw, 2rem);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)),
+                        url('https://images.pexels.com/photos/1452701/pexels-photo-1452701.jpeg') center/cover fixed;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .container {
+            position: relative;
+            max-width: min(1200px, 95%);
+            width: 95%;
+            padding: var(--container-padding);
+            margin: 1rem;
+            min-height: min-content;
+            background: var(--card-bg);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(15, 76, 117, 0.3);
+            transform-style: preserve-3d;
+            animation: containerFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes containerFloat {
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-10px) rotateX(2deg); }
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+            padding: 0 1rem;
+            text-align: center;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
+        }
+
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+            gap: clamp(1rem, 2vw, 2rem);
+            place-items: center;
+            width: 100%;
+        }
+
+        .time-block {
+            width: 100%;
+            max-width: 200px;
+            aspect-ratio: 1;
+            padding: var(--block-padding);
+            position: relative;
+            cursor: pointer;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Agregar efecto flip card */
+        .time-block-inner {
+            height: 100%;
+            background: var(--card-bg);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .time-block:hover .time-block-inner {
+            transform: rotateY(180deg);
+        }
+
+        .time-block-front,
+        .time-block-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(0.8rem, 1.5vw, 1.5rem);
+            border-radius: 15px;
+        }
+
+        .time-block-back {
+            transform: rotateY(180deg);
+            background: rgba(52, 152, 219, 0.2);
+            border-radius: 15px;
+            padding: 1rem;
+        }
+
+        .number {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: bold;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+            transition: all 0.3s ease;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .number-detailed {
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .label-detailed {
+            font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            line-height: 1.4;
+            padding: 0 0.5rem;
+        }
+
+        .label {
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.8;
+            margin-top: 0.3rem;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Efecto de partículas mejorado */
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, 
+                rgba(255, 255, 255, 0.8),
+                rgba(255, 255, 255, 0.4) 30%,
+                rgba(255, 255, 255, 0.1) 60%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: bubbleFloat linear infinite;
+            filter: blur(1px);
+        }
+
+        @keyframes bubbleFloat {
+            0% {
+                transform: translate(0, 100vh) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: var(--bubble-opacity);
+                transform: translate(
+                    calc(sin(var(--bubble-angle)) * 50px),
+                    calc(var(--travel-distance) * 0.5)
+                ) scale(1);
+            }
+            100% {
+                transform: translate(
+                    calc(sin(var(--bubble-angle)) * 100px),
+                    var(--travel-distance)
+                ) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .time-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            }
+
+            .time-block {
+                max-width: 180px;
+            }
+
+            .interaction-hint {
+                font-size: clamp(0.7rem, 2vw, 0.9rem);
+                padding: 0 1rem;
+                bottom: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .time-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .back-button {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Efecto de brillo en hover */
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent
+            );
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .container:hover::after {
+            opacity: 1;
+        }
+
+        /* Indicador de interacción */
+        .interaction-hint {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            opacity: 1;
+            transition: opacity 0.3s;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .container:hover .interaction-hint {
+            opacity: 0;
+        }
+
+        /* Mejorar la accesibilidad en dispositivos táctiles */
+        @media (hover: none) {
+            .time-block-inner {
+                transition: transform 0.4s ease;
+            }
+
+            .time-block:active .time-block-inner {
+                transform: rotateY(180deg);
+            }
+        }
+
+        /* Optimizar animaciones para mejor rendimiento */
+        @media (prefers-reduced-motion: reduce) {
+            .container,
+            .time-block-inner,
+            .particle {
+                animation: none;
+                transition: none;
+            }
+        }
+
+        /* Agregar efecto de ondas de agua */
+        .water-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                0deg,
+                rgba(15, 76, 117, 0.3) 0%,
+                transparent 100%
+            );
+            opacity: 0.5;
+            pointer-events: none;
+            animation: waterWave 8s ease-in-out infinite;
+        }
+
+        @keyframes waterWave {
+            0%, 100% {
+                transform: translateY(-5px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(5px) rotate(1deg);
+            }
+        }
+
+        /* Modificar el contenedor para efecto acuático */
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(15, 76, 117, 0.3);
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(79, 195, 220, 0.1),
+                transparent
+            );
+            animation: shimmer 2s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body>
+    <a href="Untitled-1.html" class="back-button">← Volver</a>
+    <div class="container">
+        <h1>Tiempo de Vida</h1>
+        <div class="time-grid">
+            <div class="time-block">
+                <div class="time-block-inner">
+                    <div class="time-block-front">
+                        <div class="number" id="years">0</div>
+                        <div class="label">Años</div>
+                    </div>
+                    <div class="time-block-back">
+                        <div class="number-detailed" id="years-detailed">0</div>
+                        <div class="label-detailed">Años de experiencias y memorias acumuladas</div>
+                    </div>
+                </div>
+            </div>
+            <div class="time-block">
+                <div class="time-block-inner">
+                    <div class="time-block-front">
+                        <div class="number" id="months">0</div>
+                        <div class="label">Meses</div>
+                    </div>
+                    <div class="time-block-back">
+                        <div class="number-detailed" id="months-detailed">0</div>
+                        <div class="label-detailed">Meses de crecimiento continuo</div>
+                    </div>
+                </div>
+            </div>
+            <div class="time-block">
+                <div class="time-block-inner">
+                    <div class="time-block-front">
+                        <div class="number" id="days">0</div>
+                        <div class="label">Días</div>
+                    </div>
+                    <div class="time-block-back">
+                        <div class="number-detailed" id="days-detailed">0</div>
+                        <div class="label-detailed">Días de vida</div>
+                    </div>
+                </div>
+            </div>
+            <div class="time-block">
+                <div class="time-block-inner">
+                    <div class="time-block-front">
+                        <div class="number" id="hours">0</div>
+                        <div class="label">Horas</div>
+                    </div>
+                    <div class="time-block-back">
+                        <div class="number-detailed" id="hours-detailed">0</div>
+                        <div class="label-detailed">Horas de vida</div>
+                    </div>
+                </div>
+            </div>
+            <div class="time-block">
+                <div class="time-block-inner">
+                    <div class="time-block-front">
+                        <div class="number" id="minutes">0</div>
+                        <div class="label">Minutos</div>
+                    </div>
+                    <div class="time-block-back">
+                        <div class="number-detailed" id="minutes-detailed">0</div>
+                        <div class="label-detailed">Minutos de vida</div>
+                    </div>
+                </div>
+            </div>
+            <div class="time-block">
+                <div class="time-block-inner">
+                    <div class="time-block-front">
+                        <div class="number" id="seconds">0</div>
+                        <div class="label">Segundos</div>
+                    </div>
+                    <div class="time-block-back">
+                        <div class="number-detailed" id="seconds-detailed">0</div>
+                        <div class="label-detailed">Segundos de vida</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="interaction-hint">
+            Pasa el cursor sobre los bloques para más detalles
+            <br>
+            (Toca en dispositivos móviles)
+        </div>
+    </div>
+
+    <script>
+        // Optimización del código JavaScript
+        class LifeCounter {
+            constructor(birthDate) {
+                this.birthDate = birthDate;
+                this.elements = {
+                    years: document.getElementById('years'),
+                    months: document.getElementById('months'),
+                    days: document.getElementById('days'),
+                    hours: document.getElementById('hours'),
+                    minutes: document.getElementById('minutes'),
+                    seconds: document.getElementById('seconds'),
+                    yearsDetailed: document.getElementById('years-detailed'),
+                    monthsDetailed: document.getElementById('months-detailed'),
+                    daysDetailed: document.getElementById('days-detailed'),
+                    hoursDetailed: document.getElementById('hours-detailed'),
+                    minutesDetailed: document.getElementById('minutes-detailed'),
+                    secondsDetailed: document.getElementById('seconds-detailed')
+                };
+                this.init();
+            }
+
+            calculateTime() {
+                const now = new Date();
+                const diff = now - this.birthDate;
+
+                return {
+                    years: now.getFullYear() - this.birthDate.getFullYear(),
+                    months: (now.getMonth() - this.birthDate.getMonth()) + 
+                           ((now.getFullYear() - this.birthDate.getFullYear()) * 12),
+                    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor(diff / (1000 * 60 * 60)),
+                    minutes: Math.floor(diff / (1000 * 60)),
+                    seconds: Math.floor(diff / 1000)
+                };
+            }
+
+            update() {
+                const time = this.calculateTime();
+                Object.entries(time).forEach(([key, value]) => {
+                    if (this.elements[key]) {
+                        this.elements[key].textContent = this.formatNumber(value);
+                    }
+                    const detailedElement = this.elements[key + 'Detailed'];
+                    if (detailedElement) {
+                        detailedElement.textContent = value.toLocaleString();
+                    }
+                });
+            }
+
+            formatNumber(num) {
+                if (num >= 1000000) {
+                    return (num / 1000000).toFixed(1) + 'M';
+                }
+                if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + 'K';
+                }
+                return num.toString();
+            }
+
+            init() {
+                this.update();
+                setInterval(() => this.update(), 1000);
+            }
+        }
+
+        class ParticleEffect {
+            constructor() {
+                this.particles = [];
+                this.init();
+            }
+
+            createParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                const size = Math.random() * 15 + 5;
+                const x = Math.random() * window.innerWidth;
+                const angle = Math.random() * Math.PI * 2;
+                const duration = Math.random() * 4 + 3;
+                const opacity = Math.random() * 0.5 + 0.3;
+                const distance = -window.innerHeight - size;
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${x}px`;
+                particle.style.bottom = '-20px';
+                particle.style.setProperty('--bubble-angle', `${angle}rad`);
+                particle.style.setProperty('--travel-distance', `${distance}px`);
+                particle.style.setProperty('--bubble-opacity', opacity);
+                particle.style.animationDuration = `${duration}s`;
+
+                document.body.appendChild(particle);
+
+                setTimeout(() => {
+                    particle.remove();
+                }, duration * 1000);
+            }
+
+            init() {
+                // Crear efecto de agua
+                const waterEffect = document.createElement('div');
+                waterEffect.className = 'water-effect';
+                document.body.appendChild(waterEffect);
+
+                // Crear burbujas periódicamente
+                setInterval(() => this.createParticle(), 200);
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            new LifeCounter(new Date(2002, 9, 29));
+            new ParticleEffect();
+        });
+    </script>
+</body>
+</html> 

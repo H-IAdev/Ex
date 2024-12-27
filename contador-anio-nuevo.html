@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de Año Nuevo</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+            background: url('https://www.xtrafondos.com/wallpapers/adornos-de-navidad-11222.jpg') center/cover fixed;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                rgba(0, 0, 0, 0.8),
+                rgba(0, 0, 0, 0.7)
+            );
+            z-index: 0;
+            animation: backgroundOpacity 15s infinite;
+        }
+
+        @keyframes backgroundOpacity {
+            0%, 100% { opacity: 0.8; }
+            25% { opacity: 0.6; }
+            50% { opacity: 0.3; }
+            75% { opacity: 0.7; }
+        }
+
+        .clarity-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 0;
+            opacity: 1;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .clarity-effect.clear {
+            opacity: 0;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2rem;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .countdown {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .time-block {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            min-width: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .time-block:hover {
+            transform: translateY(-5px);
+        }
+
+        .number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .label {
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            z-index: 2;
+        }
+
+        .back-button:hover {
+            background-color: rgba(255,255,255,0.3);
+        }
+
+        /* Canvas para fuegos artificiales */
+        #fireworksCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Efectos de nieve optimizados */
+        .snowflake {
+            position: fixed;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255,255,255,0.3);
+            pointer-events: none;
+            z-index: 1;
+            animation: snowfall linear infinite;
+        }
+
+        @keyframes snowfall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Efecto Glitch */
+        .glitch-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        .glitch-effect::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 255, 0.2);
+            mix-blend-mode: overlay;
+        }
+
+        .glitch-active .container {
+            animation: glitch-text 0.2s infinite;
+        }
+
+        @keyframes glitch-text {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        @media (max-width: 768px) {
+            .countdown {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .time-block {
+                min-width: 80px;
+            }
+            .number {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="clarity-effect"></div>
+    <canvas id="fireworksCanvas"></canvas>
+    <a href="Untitled-1.html" class="back-button">← Volver</a>
+    <div class="container">
+        <h1>Cuenta Regresiva para Año Nuevo</h1>
+        <div class="countdown">
+            <div class="time-block">
+                <div class="number" id="days">00</div>
+                <div class="label">Días</div>
+            </div>
+            <div class="time-block">
+                <div class="number" id="hours">00</div>
+                <div class="label">Horas</div>
+            </div>
+            <div class="time-block">
+                <div class="number" id="minutes">00</div>
+                <div class="label">Minutos</div>
+            </div>
+            <div class="time-block">
+                <div class="number" id="seconds">00</div>
+                <div class="label">Segundos</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Clase para los fuegos artificiales
+        class Firework {
+            constructor(canvas, ctx) {
+                this.canvas = canvas;
+                this.ctx = ctx;
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height;
+                this.sx = Math.random() * 3 - 1.5;
+                this.sy = -Math.random() * 5 - 5;
+                this.size = 2;
+                this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                this.exploded = false;
+                this.particles = [];
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.x += this.sx;
+                    this.y += this.sy;
+                    this.sy += 0.1;
+
+                    if (this.sy >= -2) {
+                        this.explode();
+                    }
+                } else {
+                    for (let i = this.particles.length - 1; i >= 0; i--) {
+                        const p = this.particles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.1;
+                        p.life -= 0.02;
+                        if (p.life <= 0) this.particles.splice(i, 1);
+                    }
+                }
+            }
+
+            explode() {
+                this.exploded = true;
+                for (let i = 0; i < 50; i++) {
+                    const angle = (Math.PI * 2 / 50) * i;
+                    const speed = Math.random() * 3 + 2;
+                    this.particles.push({
+                        x: this.x,
+                        y: this.y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        life: 1,
+                        color: this.color
+                    });
+                }
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    this.ctx.fillStyle = this.color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                } else {
+                    for (const p of this.particles) {
+                        this.ctx.fillStyle = `hsla(${this.color}, ${p.life * 100}%)`;
+                        this.ctx.beginPath();
+                        this.ctx.arc(p.x, p.y, this.size * p.life, 0, Math.PI * 2);
+                        this.ctx.fill();
+                    }
+                }
+            }
+        }
+
+        // Inicialización del canvas y animación
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+        let fireworks = [];
+        let lastFirework = 0;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const now = Date.now();
+            if (now - lastFirework > 1000) {
+                fireworks.push(new Firework(canvas, ctx));
+                lastFirework = now;
+            }
+
+            for (let i = fireworks.length - 1; i >= 0; i--) {
+                fireworks[i].update();
+                fireworks[i].draw();
+                if (fireworks[i].exploded && fireworks[i].particles.length === 0) {
+                    fireworks.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Función para crear copos de nieve
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.innerHTML = '❄';
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+            snowflake.style.opacity = Math.random();
+            snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+            document.body.appendChild(snowflake);
+
+            setTimeout(() => snowflake.remove(), 5000);
+        }
+
+        // Actualización del contador
+        function updateCountdown() {
+            const now = new Date();
+            const nextYear = new Date(now.getFullYear() + 1, 0, 1);
+            const diff = nextYear - now;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        // Efecto Glitch
+        function createGlitchEffect() {
+            const glitchOverlay = document.createElement('div');
+            glitchOverlay.className = 'glitch-effect';
+            document.body.appendChild(glitchOverlay);
+
+            setInterval(() => {
+                document.body.classList.add('glitch-active');
+                glitchOverlay.style.display = 'block';
+
+                // Generar líneas de ruido
+                for (let i = 0; i < 10; i++) {
+                    const line = document.createElement('div');
+                    line.style.position = 'absolute';
+                    line.style.top = Math.random() * 100 + '%';
+                    line.style.width = '100%';
+                    line.style.height = '1px';
+                    line.style.background = `rgba(255,255,255,${Math.random()})`;
+                    line.style.transform = `translateY(${Math.random() * 10 - 5}px)`;
+                    glitchOverlay.appendChild(line);
+                }
+
+                setTimeout(() => {
+                    document.body.classList.remove('glitch-active');
+                    glitchOverlay.style.display = 'none';
+                    glitchOverlay.innerHTML = '';
+                }, 150);
+            }, 10000); // Ocurre cada 10 segundos
+        }
+
+        // Efecto de nitidez ocasional
+        function createClarityEffect() {
+            const clarityEffect = document.querySelector('.clarity-effect');
+            
+            setInterval(() => {
+                // 20% de probabilidad de que ocurra el efecto
+                if (Math.random() < 0.2) {
+                    clarityEffect.classList.add('clear');
+                    
+                    // Duración aleatoria del efecto de nitidez
+                    setTimeout(() => {
+                        clarityEffect.classList.remove('clear');
+                    }, Math.random() * 2000 + 1000); // Entre 1 y 3 segundos
+                }
+            }, 5000); // Verificar cada 5 segundos
+        }
+
+        // Inicialización
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animate();
+        setInterval(updateCountdown, 1000);
+        setInterval(createSnowflake, 200);
+        createGlitchEffect();
+        updateCountdown();
+        createClarityEffect();
+    </script>
+</body>
+</html> 
