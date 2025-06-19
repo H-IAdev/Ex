@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horror Portfolio - Art, Bitcoins, Economy, Sound</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#themes">Themes</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero">
+            <h1>The Algorithmic Abyss</h1>
+            <p>Digital echoes from the void where art, code, and chaos converge.</p>
+        </section>
+
+        <section id="portfolio" class="fade-in">
+            <h2>Artefacts from the Ether</h2>
+            <div class="portfolio-grid">
+                <div class="portfolio-item">
+                    <img src="images/placeholder1.jpg" alt="Portfolio Item 1">
+                    <h3>Project Alpha</h3>
+                    <p>A descent into digital madness.</p>
+                </div>
+                <div class="portfolio-item">
+                    <img src="images/placeholder2.jpg" alt="Portfolio Item 2">
+                    <h3>Project Beta</h3>
+                    <p>The economics of fear.</p>
+                </div>
+                <div class="portfolio-item">
+                    <img src="images/placeholder3.jpg" alt="Portfolio Item 3">
+                    <h3>Project Gamma</h3>
+                    <p>Symphony of the strange.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="themes" class="fade-in">
+            <h2>Echoes of the Deep Web</h2>
+            <div class="theme-category" id="horror-art">
+                <h3>Visceral Visions & Digital Decay</h3>
+                <p>Visual nightmares and beautiful grotesqueries.</p>
+                <!-- Add more specific content or interactive elements later -->
+            </div>
+            <div class="theme-category" id="bitcoins-economy">
+                <h3>Crypto Currencies & Market Madness</h3>
+                <p>The volatile dance of digital gold and global markets.</p>
+                <!-- Add more specific content or interactive elements later -->
+            </div>
+            <div class="theme-category" id="sound">
+                <h3>Sonic Spectres & Frequency Phantoms</h3>
+                <p>The unsettling frequencies and harmonious horrors.</p>
+                <!-- Add more specific content or interactive elements later -->
+            </div>
+        </section>
+
+        <section id="contact" class="fade-in">
+            <h2>Transmit to the Void</h2>
+            <form>
+                <div>
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit">Send into the Ether</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; MMXIV NULL_SECTOR. All transmissions are monitored.</p>
+        <div id="audio-control">
+            <audio id="background-ambience" loop>
+                <source src="audio/ambience.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            <button id="mute-toggle">Mute Sound</button>
+        </div>
+    </footer>
+    <script src="js/script.js"></script>
+</body>
+</html>
