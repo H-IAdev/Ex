@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gran Final de Año | Experiencia Inmersiva</title>
+    <meta name="description" content="Cuenta regresiva interactiva y premium para el fin de año.">
+    
+    <!-- Fuentes de Google: Outfit para modernidad, Orbitron para números futuristas -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* * =========================================
+         * 1. CONFIGURACIÓN Y VARIABLES (CSS CORE)
+         * =========================================
+         */
+        :root {
+            /* Paleta de Colores Neon/Dark */
+            --bg-deep: #050507;
+            --bg-surface: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary-accent: #00f2ff; /* Cyan Neon */
+            --secondary-accent: #bc13fe; /* Purple Neon */
+            --gold-accent: #ffd700; /* Gold for Midnight */
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            
+            /* Efectos */
+            --glow-text: 0 0 20px rgba(0, 242, 255, 0.5);
+            --glass-blur: blur(16px);
+            --transition-smooth: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Canvas de fondo para partículas */
+        #ambient-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* * =========================================
+         * 2. ESTRUCTURA Y LAYOUT
+         * =========================================
+         */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            z-index: 1;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: slideIn 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, var(--primary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* COUNTDOWN GRID */
+        .countdown-wrapper {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 4rem;
+        }
+
+        /* Tarjeta de Tiempo Individual */
+        .time-card {
+            background: var(--bg-surface);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem 1rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .time-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            border-color: var(--primary-accent);
+            box-shadow: 0 10px 40px rgba(0, 242, 255, 0.15);
+        }
+
+        /* Número digital */
+        .time-value {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            color: var(--text-main);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-shadow: 0 0 10px rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        /* Animación de pulso para los segundos */
+        .pulse-animation {
+            animation: pulseGlow 0.8s ease-out;
+        }
+
+        .time-label {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Iconos flotantes decorativos */
+        .card-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.2rem;
+            opacity: 0.3;
+        }
+
+        /* TRIVIA / CARDS SECTION */
+        .trivia-section {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        .trivia-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 300px;
+            flex: 1 1 250px;
+            transition: var(--transition-smooth);
+            cursor: default;
+        }
+
+        .trivia-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-3px);
+        }
+
+        .trivia-icon {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .trivia-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #d1d5db;
+        }
+
+        /* FOOTER & CONTROLS */
+        .controls {
+            margin-top: 2rem;
+            z-index: 10;
+        }
+
+        .btn-sound {
+            background: transparent;
+            border: 1px solid var(--primary-accent);
+            color: var(--primary-accent);
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-sound:hover {
+            background: var(--primary-accent);
+            color: #000;
+            box-shadow: 0 0 20px var(--primary-accent);
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: 1;
+        }
+
+        /* * =========================================
+         * 3. ANIMACIONES Y MEDIA QUERIES
+         * =========================================
+         */
+        @keyframes slideIn {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseGlow {
+            0% { text-shadow: 0 0 0px var(--primary-accent); transform: scale(1); }
+            50% { text-shadow: 0 0 20px var(--primary-accent); transform: scale(1.05); }
+            100% { text-shadow: 0 0 0px var(--primary-accent); transform: scale(1); }
+        }
+
+        @keyframes urgency {
+            0%, 100% { border-color: rgba(255, 0, 0, 0.2); }
+            50% { border-color: rgba(255, 0, 0, 0.8); box-shadow: 0 0 30px rgba(255, 0, 0, 0.2); }
+        }
+
+        @media (max-width: 768px) {
+            .countdown-wrapper {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            .hero h1 { font-size: 2.5rem; }
+            .time-value { font-size: 3rem; }
+        }
+
+        /* Clase para el "Modo Urgencia" (últimos 10 segundos) */
+        .mode-urgent .time-card {
+            border-color: #ff2a6d;
+        }
+        .mode-urgent .time-value {
+            color: #ff2a6d;
+            text-shadow: 0 0 15px #ff2a6d;
+        }
+        
+        /* Clase para el "Año Nuevo" (Celebración) */
+        .mode-celebrate .hero h1 {
+            background: linear-gradient(to right, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Canvas para efectos de fondo -->
+    <canvas id="ambient-canvas"></canvas>
+
+    <header class="main-container">
+        <section class="hero">
+            <h1 id="main-title">Próximo Capítulo</h1>
+            <p id="sub-title">El futuro está cargando... prepárate para el impacto.</p>
+        </section>
+
+        <!-- Contador Principal -->
+        <div class="countdown-wrapper" id="countdown">
+            <!-- Días -->
+            <div class="time-card">
+                <span class="card-icon">📅</span>
+                <span class="time-value" id="days">00</span>
+                <span class="time-label">Días</span>
+            </div>
+            <!-- Horas -->
+            <div class="time-card">
+                <span class="card-icon">⏳</span>
+                <span class="time-value" id="hours">00</span>
+                <span class="time-label">Horas</span>
+            </div>
+            <!-- Minutos -->
+            <div class="time-card">
+                <span class="card-icon">⚡</span>
+                <span class="time-value" id="minutes">00</span>
+                <span class="time-label">Minutos</span>
+            </div>
+            <!-- Segundos -->
+            <div class="time-card">
+                <span class="card-icon">✨</span>
+                <span class="time-value" id="seconds">00</span>
+                <span class="time-label">Segundos</span>
+            </div>
+        </div>
+
+        <!-- Curiosidades / Mensajes -->
+        <div class="trivia-section">
+            <div class="trivia-card">
+                <span class="trivia-icon">🚀</span>
+                <p class="trivia-text">"El mejor momento para plantar un árbol fue hace 20 años. El segundo mejor momento es hoy."</p>
+            </div>
+            <div class="trivia-card">
+                <span class="trivia-icon">💡</span>
+                <p class="trivia-text">Dato Curioso: La Tierra gira un poco más rápido últimamente, haciendo los días milisegundos más cortos.</p>
+            </div>
+            <div class="trivia-card">
+                <span class="trivia-icon">🎯</span>
+                <p class="trivia-text">Meta para el próximo año: No es la velocidad lo que importa, sino la dirección.</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-sound" id="toggle-sound">
+                <span>🔇</span> Activar Sonido
+            </button>
+        </div>
+    </header>
+
+    <footer>
+        <p>Arquitectura Frontend & Diseño UI/UX &copy; <span id="year-display"></span>. Listo para despegar.</p>
+    </footer>
+
+    <script>
+        /**
+         * =========================================
+         * LÓGICA DE APLICACIÓN (VANILLA JS)
+         * =========================================
+         */
+
+        const UI = {
+            days: document.getElementById('days'),
+            hours: document.getElementById('hours'),
+            minutes: document.getElementById('minutes'),
+            seconds: document.getElementById('seconds'),
+            title: document.getElementById('main-title'),
+            subtitle: document.getElementById('sub-title'),
+            soundBtn: document.getElementById('toggle-sound'),
+            body: document.body,
+            yearDisplay: document.getElementById('year-display')
+        };
+
+        // Estado Global
+        let audioContext = null;
+        let isMuted = true;
+        let animationFrameId;
+        
+        // Calcular fecha objetivo (Fin del año actual)
+        const currentYear = new Date().getFullYear();
+        UI.yearDisplay.textContent = currentYear;
+        
+        // OBJETIVO: 31 de Diciembre del año actual a las 23:59:59
+        // Nota: Si abres esto el 1 de enero, apuntará al final de ESE año.
+        const targetDate = new Date(`December 31, ${currentYear} 23:59:59`).getTime();
+
+        /**
+         * SISTEMA DE AUDIO (Web Audio API)
+         * Genera un sonido "bip" sintético sin archivos externos.
+         */
+        function playTickSound(frequency = 800, type = 'sine') {
+            if (isMuted || !audioContext) return;
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.type = type;
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            
+            gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        UI.soundBtn.addEventListener('click', () => {
+            initAudio();
+            isMuted = !isMuted;
+            UI.soundBtn.innerHTML = isMuted ? '<span>🔇</span> Activar Sonido' : '<span>🔊</span> Sonido Activado';
+            if (!isMuted) {
+                // Play test sound
+                playTickSound(600, 'sine');
+            }
+        });
+
+        /**
+         * MOTOR DE CUENTA REGRESIVA
+         */
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            // Cálculos de tiempo
+            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Si el tiempo terminó
+            if (distance < 0) {
+                handleNewYear();
+                return;
+            }
+
+            // Actualizar DOM con formato "00"
+            updateCard(UI.days, d);
+            updateCard(UI.hours, h);
+            updateCard(UI.minutes, m);
+            
+            // Lógica especial para segundos (efecto pulso)
+            if (UI.seconds.innerText !== formatTime(s)) {
+                UI.seconds.innerText = formatTime(s);
+                UI.seconds.classList.remove('pulse-animation');
+                void UI.seconds.offsetWidth; // Trigger reflow
+                UI.seconds.classList.add('pulse-animation');
+                
+                // Sonido de tictac
+                if (distance < 11000) {
+                    playTickSound(1200, 'square'); // Sonido urgente
+                } else {
+                    playTickSound(800, 'sine'); // Sonido normal
+                }
+            }
+
+            // Efectos de "Urgencia" (Últimos 10 segundos)
+            if (distance < 11000) {
+                UI.body.classList.add('mode-urgent');
+                UI.subtitle.innerText = "¡PREPÁRATE! ES EL MOMENTO.";
+                UI.subtitle.style.color = "#ff2a6d";
+            }
+        }
+
+        function formatTime(time) {
+            return time < 10 ? `0${time}` : time;
+        }
+
+        function updateCard(element, value) {
+            const formatted = formatTime(value);
+            if (element.innerText !== formatted) {
+                element.innerText = formatted;
+            }
+        }
+
+        function handleNewYear() {
+            clearInterval(timerInterval);
+            UI.days.innerText = "00";
+            UI.hours.innerText = "00";
+            UI.minutes.innerText = "00";
+            UI.seconds.innerText = "00";
+            
+            UI.title.innerText = `¡FELIZ ${currentYear + 1}!`;
+            UI.subtitle.innerText = "El futuro es ahora. Hagamos historia.";
+            
+            UI.body.classList.remove('mode-urgent');
+            UI.body.classList.add('mode-celebrate');
+            
+            startConfetti();
+        }
+
+        // Iniciar Loop
+        const timerInterval = setInterval(updateCountdown, 1000);
+        updateCountdown(); // Ejecución inicial inmediata
+
+        /**
+         * SISTEMA DE PARTÍCULAS (Canvas Background)
+         * Crea un ambiente flotante y elegante.
+         */
+        const canvas = document.getElementById('ambient-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() * 1) - 0.5;
+                this.speedY = (Math.random() * 1) - 0.5;
+                this.color = `rgba(${Math.random() > 0.5 ? '0, 242, 255' : '188, 19, 254'}, ${Math.random() * 0.5})`;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.005; // Titilar levemente
+                if (this.size <= 0.2) this.size = Math.random() * 2; // Reiniciar tamaño
+                
+                // Bordes infinitos
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            const numberOfParticles = Math.min(100, (canvas.width * canvas.height) / 9000);
+            for (let i = 0; i < numberOfParticles; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+                particlesArray[i].draw();
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        /**
+         * SISTEMA DE CONFETI (Celebración Final)
+         * Genera explosiones de color sin librerías externas.
+         */
+        let confettiParticles = [];
+        
+        function startConfetti() {
+            // Reutilizamos el canvas existente pero cambiamos el modo
+            const createConfetti = () => {
+                for (let i = 0; i < 100; i++) {
+                    confettiParticles.push({
+                        x: canvas.width / 2,
+                        y: canvas.height / 2,
+                        w: Math.random() * 10 + 5,
+                        h: Math.random() * 5 + 5,
+                        dx: (Math.random() - 0.5) * 20,
+                        dy: (Math.random() - 0.5) * 20,
+                        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                        rotation: Math.random() * 360,
+                        dRotation: (Math.random() - 0.5) * 10
+                    });
+                }
+            };
+
+            createConfetti();
+            
+            // Loop de animación específico para confeti superpuesto
+            function animateConfetti() {
+                // No borramos el canvas completamente para dejar rastro ligero o mezclar con fondo
+                // Pero como usamos el mismo canvas, simplemente dibujamos encima
+                
+                confettiParticles.forEach((p, index) => {
+                    p.x += p.dx;
+                    p.y += p.dy;
+                    p.dy += 0.2; // Gravedad
+                    p.dx *= 0.96; // Fricción aire
+                    p.rotation += p.dRotation;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation * Math.PI / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+
+                    // Eliminar si sale de pantalla
+                    if (p.y > canvas.height) confettiParticles.splice(index, 1);
+                });
+
+                if (confettiParticles.length > 0) {
+                    requestAnimationFrame(animateConfetti);
+                }
+            }
+            animateConfetti();
+            
+            // Ráfagas adicionales
+            let bursts = 0;
+            const burstInterval = setInterval(() => {
+                createConfetti();
+                bursts++;
+                if (bursts > 10) clearInterval(burstInterval);
+            }, 500);
+        }
+
+    </script>
+</body>
+</html>
