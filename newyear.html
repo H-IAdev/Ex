@@ -39,6 +39,36 @@
             box-sizing: border-box;
         }
 
+        /* * =========================================
+         * CUSTOM SCROLLBAR
+         * =========================================
+         */
+        /* Webkit (Chrome, Safari, Edge, Opera) */
+        ::-webkit-scrollbar {
+            width: 8px; /* Ancho delgado para no invadir */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-deep); /* Se funde con el fondo */
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.1); /* Sutil */
+            border-radius: 4px;
+            border: 1px solid transparent;
+            background-clip: content-box;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(255, 255, 255, 0.3); /* Un poco más visible al hover */
+        }
+
+        /* Firefox */
+        html {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) var(--bg-deep);
+        }
+
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-deep);
